@@ -6,6 +6,7 @@ import java.text.*;
 import java.util.*;
 
 public class ExcelFile {
+    private static final Helper helper = new Helper();
     private static final List<Integer> criteriaIndex = new ArrayList<>();
     private static Integer gapIndex = -1;
     private static Integer sumIndex = -1;
@@ -30,7 +31,7 @@ public class ExcelFile {
 
             for (Row row: sheet1) {
                 List<String> rowList = new ArrayList<>();
-                boolean isEmptyRow = checkEmptyRow(row);
+                boolean isEmptyRow = helper.checkEmptyRow(row);
                 if (isEmptyRow) break;
 
                 for (Cell cell: row) {
@@ -45,10 +46,10 @@ public class ExcelFile {
             System.out.println("Что-то пошло не так! " + e.getMessage());
         }
 
-        Integer emptyColumnNumber = findEmptyColumnNumber(data);
+        Integer emptyColumnNumber = helper.findEmptyColumnNumber(data);
         if (emptyColumnNumber == null) return data;
 
-        return deleteEmptyColumns(data, emptyColumnNumber);
+        return helper.deleteEmptyColumns(data, emptyColumnNumber);
     }
 
     public static void createNewFile(List<List<String>> data, String path){
@@ -96,39 +97,39 @@ public class ExcelFile {
                         lineFirstElement.equals(data.get(i + 1).get(0)) &&
                         lineSecondElement.equals(data.get(i + 1).get(1))) {
 
-                    if (j != gapIndex && isEmptyCell(element, nextRowElement)) {
-                        String newElement = getCellContent(element, nextRowElement);
+                    if (j != gapIndex && helper.isEmptyCell(element, nextRowElement)) {
+                        String newElement = helper.getCellContent(element, nextRowElement);
                         if (newElement.equals("")) {
                             line.add(newElement);
                             continue;
                         }
-                        line.add(convertFormat(getParsedNum(newElement)));
+                        line.add(helper.convertFormat(helper.getParsedNum(newElement)));
                         continue;
                     }
 
                     if (criteriaIndex.contains(j)) {
-                        if (iSDouble(element)) {
-                            line.add(convertFormat(getParsedNum(element)));
+                        if (helper.iSDouble(element)) {
+                            line.add(helper.convertFormat(helper.getParsedNum(element)));
                         } else {
                             line.add(element);
                         }
                     }
 
                     if (j == sumIndex) {
-                        line.add(convertFormat(getParsedNum(element) + getParsedNum(nextRowElement)));
+                        line.add(helper.convertFormat(helper.getParsedNum(element) + helper.getParsedNum(nextRowElement)));
                     }
 
                     if (j == maxIndex) {
-                        line.add(convertFormat(Math.max(getParsedNum(element), getParsedNum(nextRowElement))));
+                        line.add(helper.convertFormat(Math.max(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 
                     if (j == minIndex) {
-                        line.add(convertFormat(Math.min(getParsedNum(element), getParsedNum(nextRowElement))));
+                        line.add(helper.convertFormat(Math.min(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 
                     if (j == concatIndex) {
-                        if (iSDouble(element)) {
-                            line.add(convertFormat(getParsedNum(element)) + convertFormat(getParsedNum(nextRowElement)));
+                        if (helper.iSDouble(element)) {
+                            line.add(helper.convertFormat(helper.getParsedNum(element)) + helper.convertFormat(helper.getParsedNum(nextRowElement)));
                         } else {
                             line.add(element + nextRowElement);
                         }
@@ -143,13 +144,13 @@ public class ExcelFile {
                     }
 
                     if (criteriaIndex.contains(j) || j == concatIndex) {
-                        if (iSDouble(element)) {
-                            line.add(convertFormat(getParsedNum(element)));
+                        if (helper.iSDouble(element)) {
+                            line.add(helper.convertFormat(helper.getParsedNum(element)));
                         } else {
                             line.add(element);
                         }
                     } else {
-                        line.add(convertFormat(getParsedNum(element)));
+                        line.add(helper.convertFormat(helper.getParsedNum(element)));
                     }
                     flag = false;
                 }
@@ -157,76 +158,6 @@ public class ExcelFile {
             sortedData.add(line);
         }
         return sortedData;
-    }
-
-    public static double getParsedNum(String element) {
-        return Double.parseDouble(element);
-    }
-
-    public static boolean isEmptyCell(String element, String nextRowElement) {
-        return element.equals("") || nextRowElement.equals("");
-    }
-
-    public static String getCellContent(String element, String nextRowElement) {
-        if (element.equals("")) {
-            return nextRowElement;
-        }
-        return element;
-    }
-
-    public static boolean iSDouble(String str) {
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static String convertFormat(Double num) {
-        DecimalFormat format = new DecimalFormat();
-        format.setDecimalSeparatorAlwaysShown(false);
-        return format.format(num);
-    }
-
-    public static boolean checkEmptyRow(Row row){
-        boolean isEmpty = true;
-        DataFormatter dataFormatter = new DataFormatter();
-
-        for(Cell cell: row) {
-            if(dataFormatter.formatCellValue(cell).trim().length() > 0) {
-                isEmpty = false;
-                break;
-            }
-        }
-        return isEmpty;
-    }
-
-    public static Integer findEmptyColumnNumber(List<List<String>> data){
-        Integer emptyColumnNumber = null;
-
-        for (int i = 0; i < data.get(0).size(); i++) {
-            for (List<String> datum : data) {
-                String cellValue = datum.get(i);
-                if (cellValue.length() == 0) {
-                    emptyColumnNumber = i;
-                } else {
-                    emptyColumnNumber = null;
-                    break;
-                }
-            }
-            if (emptyColumnNumber != null) break;
-        }
-        return emptyColumnNumber;
-    }
-
-    public static List<List<String>> deleteEmptyColumns(List<List<String>> data, int emptyColumnNumber){
-        for (List<String> row : data) {
-            while (row.size() > emptyColumnNumber) {
-                row.remove(emptyColumnNumber);
-            }
-        }
-        return data;
     }
 
     public static void setFirstLineIndexes(List<String> firstLine) {
