@@ -1,9 +1,7 @@
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 
-import java.text.DecimalFormat;
-import java.util.List;
+import java.text.*;
+import java.util.*;
 
 public class Helper {
     public double getParsedNum(String element) {
