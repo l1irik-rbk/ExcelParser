@@ -21,7 +21,7 @@ public class ExcelFile {
         createNewFile(newData, savePath);
     }
 
-    public List<List<String>> getDataFromFile(String path) {
+    public static List<List<String>> getDataFromFile(String path) {
         List<List<String>> data = new ArrayList<>();
         try {
             FileInputStream file = new FileInputStream(path);
@@ -248,5 +248,3 @@ public class ExcelFile {
         }
     }
 }
-
-
