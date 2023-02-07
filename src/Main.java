@@ -2,6 +2,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        new ExcelFile().parseExcelFile();
+        new ExcelParser();
     }
 }
