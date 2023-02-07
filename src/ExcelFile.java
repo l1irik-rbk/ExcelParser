@@ -20,6 +20,7 @@ public class ExcelFile {
         List<String> firstLine = data.remove(0);
         setFirstLineIndexes(firstLine);
         List<List<String>> newData = sortData(data);
+        createNewFile(newData, savePath);
         System.out.println(newData);
     }
 
@@ -51,6 +52,27 @@ public class ExcelFile {
         if (emptyColumnNumber == null) return data;
 
         return deleteEmptyColumns(data, emptyColumnNumber);
+    }
+
+    public static void createNewFile(List<List<String>> data, String path){
+        try {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet();
+
+            for (int i =0; i < data.size(); i++) {
+                Row row = sheet.createRow(i);
+                for (int j = 0; j < data.get(i).size(); j++) {
+                    Cell cell = row.createCell(j);
+                    cell.setCellValue(data.get(i).get(j));
+                }
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(path);
+            workbook.write(outputStream);
+            workbook.close();
+        } catch (Exception e) {
+            System.out.println("Что-то пошло не так! " + e.getMessage());
+        }
     }
 
     public static List<List<String>> sortData(List<List<String>> data) {
