@@ -2,6 +2,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class ExcelFile {
@@ -18,7 +19,8 @@ public class ExcelFile {
         List<List<String>> data = getDataFromFile(selectedPath);
         List<String> firstLine = data.remove(0);
         setFirstLineIndexes(firstLine);
-        System.out.println(data);
+        List<List<String>> newData = sortData(data);
+        System.out.println(newData);
     }
 
     public List<List<String>> getDataFromFile(String path) {
@@ -49,6 +51,130 @@ public class ExcelFile {
         if (emptyColumnNumber == null) return data;
 
         return deleteEmptyColumns(data, emptyColumnNumber);
+    }
+
+    public static List<List<String>> sortData(List<List<String>> data) {
+        List<List<String>> sortedData = new ArrayList<>();
+        String element;
+        String nextRowElement;
+        boolean flag = false;
+
+        for (int i = 0; i < data.size(); i++) {
+            List<String> line = new ArrayList<>();
+            String lineFirstElement = data.get(i).get(0);
+            String lineSecondElement = data.get(i).get(1);
+
+            if (flag) {
+                flag = false;
+                continue;
+            }
+
+            for (int j = 0; j < data.get(i).size(); j++) {
+                element = data.get(i).get(j);
+                nextRowElement = data.size() - 1 > i ? data.get(i + 1).get(j) : element;
+
+                if (data.size() - 1 > i &&
+                        lineFirstElement.equals(data.get(i + 1).get(0)) &&
+                        lineSecondElement.equals(data.get(i + 1).get(1))) {
+
+                    if (j != gapIndex && isEmptyCell(element, nextRowElement)) {
+                        String newElement = getCellContent(element, nextRowElement);
+                        if (newElement.equals("")) {
+                            line.add(newElement);
+                            continue;
+                        }
+                        line.add(convertFormat(Double.parseDouble(newElement)));
+                        continue;
+                    }
+
+                    if (criteriaIndex.contains(j)) {
+                        if (iSDouble(element)) {
+                            line.add(convertFormat(Double.parseDouble(element)));
+                        } else {
+                            line.add(element);
+                        }
+                    }
+
+                    if (j == sumIndex) {
+                        double parsedNum1 = Double.parseDouble(element);
+                        double parsedNum2 = Double.parseDouble(nextRowElement);
+                        line.add(convertFormat(parsedNum1 + parsedNum2));
+                    }
+
+                    if (j == maxIndex) {
+                        double parsedNum1 = Double.parseDouble(element);
+                        double parsedNum2 = Double.parseDouble(nextRowElement);
+                        line.add(convertFormat(Math.max(parsedNum1, parsedNum2)));
+                    }
+
+                    if (j == minIndex) {
+                        double parsedNum1 = Double.parseDouble(element);
+                        double parsedNum2 = Double.parseDouble(nextRowElement);
+                        line.add(convertFormat(Math.min(parsedNum1, parsedNum2)));
+                    }
+
+                    if (j == concatIndex) {
+                        double parsedNum1;
+                        double parsedNum2;
+
+                        if (iSDouble(element)) {
+                            parsedNum1 = Double.parseDouble(element);
+                            parsedNum2 = Double.parseDouble(nextRowElement);
+                            line.add(convertFormat(parsedNum1) + convertFormat(parsedNum2));
+                        } else {
+                            line.add(element + nextRowElement);
+                        }
+                    }
+                    flag = true;
+                } else {
+                    if (j == gapIndex) continue;
+
+                    if (element.equals("")) {
+                        line.add(element);
+                        continue;
+                    }
+
+                    if (criteriaIndex.contains(j) || j == concatIndex) {
+                        if (iSDouble(element)) {
+                            line.add(convertFormat(Double.parseDouble(element)));
+                        } else {
+                            line.add(element);
+                        }
+                    } else {
+                        line.add(convertFormat(Double.parseDouble(element)));
+                    }
+                    flag = false;
+                }
+            }
+            sortedData.add(line);
+        }
+        return sortedData;
+    }
+
+    public static boolean isEmptyCell(String element, String nextRowElement) {
+        return element.equals("") || nextRowElement.equals("");
+    }
+
+    public static String getCellContent(String element, String nextRowElement) {
+        if (element.equals("")) {
+            return nextRowElement;
+        }
+        return element;
+    }
+
+    public static boolean iSDouble(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String convertFormat(Double num) {
+        DecimalFormat format = new DecimalFormat();
+        format.setDecimalSeparatorAlwaysShown(false);
+        return format.format(num);
     }
 
     public static boolean checkEmptyRow(Row row){
