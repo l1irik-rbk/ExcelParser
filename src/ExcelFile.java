@@ -5,10 +5,19 @@ import java.io.*;
 import java.util.*;
 
 public class ExcelFile {
+    private static final List<Integer> criteriaIndex = new ArrayList<>();
+    private static Integer gapIndex = -1;
+    private static Integer sumIndex = -1;
+    private static Integer maxIndex = -1;
+    private static Integer minIndex = -1;
+    private static Integer concatIndex = -1;
+
     public void parseExcelFile() {
         String selectedPath = "E:\\1Java\\Test\\test3.xlsx";
         String savePath = "C:\\Users\\Kirill\\Desktop\\123.xlsx";
         List<List<String>> data = getDataFromFile(selectedPath);
+        List<String> firstLine = data.remove(0);
+        setFirstLineIndexes(firstLine);
         System.out.println(data);
     }
 
@@ -80,6 +89,18 @@ public class ExcelFile {
             }
         }
         return data;
+    }
+
+    public static void setFirstLineIndexes(List<String> firstLine) {
+        for (int i = 0; i < firstLine.size(); i++) {
+            String element = firstLine.get(i);
+            if ("".equals(element)) criteriaIndex.add(i);
+            if ("-".equals(element)) gapIndex = i;
+            if ("SUM".equals(element)) sumIndex = i;
+            if ("MAX".equals(element)) maxIndex = i;
+            if ("MIN".equals(element)) minIndex = i;
+            if ("CONCAT".equals(element)) concatIndex = i;
+        }
     }
 }
 
