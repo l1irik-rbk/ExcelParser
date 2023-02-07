@@ -13,15 +13,12 @@ public class ExcelFile {
     private static Integer minIndex = -1;
     private static Integer concatIndex = -1;
 
-    public void parseExcelFile() {
-        String selectedPath = "E:\\1Java\\Test\\test3.xlsx";
-        String savePath = "C:\\Users\\Kirill\\Desktop\\123.xlsx";
+    public void parseExcelFile(String selectedPath, String savePath ) {
         List<List<String>> data = getDataFromFile(selectedPath);
         List<String> firstLine = data.remove(0);
         setFirstLineIndexes(firstLine);
         List<List<String>> newData = sortData(data);
         createNewFile(newData, savePath);
-        System.out.println(newData);
     }
 
     public List<List<String>> getDataFromFile(String path) {

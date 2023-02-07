@@ -1,12 +1,15 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 
 public class ExcelParser extends JFrame implements ActionListener {
     JButton loadButton, saveButton, createButton;
     JLabel selectedFileText, saveFileText;
     JFrame jf;
+    File selectedFilePath, saveFilePath;
 
     public ExcelParser() {
         jf = new JFrame("Test");
@@ -42,7 +45,43 @@ public class ExcelParser extends JFrame implements ActionListener {
         int Y = (screen.height - height) / 2;
         jf.setBounds(X, Y, width, height);
     }
-    public void actionPerformed(ActionEvent e) {
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == loadButton) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Select .xlsx or .xls file", "xlsx", "xls");
+            fileChooser.setFileFilter(filter);
+
+            int response =  fileChooser.showOpenDialog(null);
+
+            if (response == JFileChooser.APPROVE_OPTION) {
+                selectedFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                selectedFileText.setText("Путь до файла: " + selectedFilePath);
+                System.out.println(selectedFilePath);
+            }
+        }
+
+        if (e.getSource() == saveButton) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Save .xlsx or .xls file", "xlsx", "xls");
+            fileChooser.setFileFilter(filter);
+
+            int response =  fileChooser.showSaveDialog(null);
+
+            if (response == JFileChooser.APPROVE_OPTION) {
+                saveFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                saveFileText.setText("Путь до места сохранения: " + saveFilePath);
+                System.out.println(saveFilePath);
+            }
+        }
+
+        if (e.getSource() == createButton) {
+            if (selectedFilePath == null || saveFilePath == null) return;
+            new ExcelFile().parseExcelFile(selectedFilePath.toString(), saveFilePath.toString());
+            System.exit(0);
+        }
     }
 }
