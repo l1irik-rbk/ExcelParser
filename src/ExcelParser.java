@@ -59,7 +59,6 @@ public class ExcelParser extends JFrame implements ActionListener {
             if (response == JFileChooser.APPROVE_OPTION) {
                 selectedFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());
                 selectedFileText.setText("Путь до файла: " + selectedFilePath);
-                System.out.println(selectedFilePath);
             }
         }
 
@@ -74,7 +73,6 @@ public class ExcelParser extends JFrame implements ActionListener {
             if (response == JFileChooser.APPROVE_OPTION) {
                 saveFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());
                 saveFileText.setText("Путь до места сохранения: " + saveFilePath);
-                System.out.println(saveFilePath);
             }
         }
 
