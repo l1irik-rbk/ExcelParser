@@ -102,44 +102,33 @@ public class ExcelFile {
                             line.add(newElement);
                             continue;
                         }
-                        line.add(convertFormat(Double.parseDouble(newElement)));
+                        line.add(convertFormat(getParsedNum(newElement)));
                         continue;
                     }
 
                     if (criteriaIndex.contains(j)) {
                         if (iSDouble(element)) {
-                            line.add(convertFormat(Double.parseDouble(element)));
+                            line.add(convertFormat(getParsedNum(element)));
                         } else {
                             line.add(element);
                         }
                     }
 
                     if (j == sumIndex) {
-                        double parsedNum1 = Double.parseDouble(element);
-                        double parsedNum2 = Double.parseDouble(nextRowElement);
-                        line.add(convertFormat(parsedNum1 + parsedNum2));
+                        line.add(convertFormat(getParsedNum(element) + getParsedNum(nextRowElement)));
                     }
 
                     if (j == maxIndex) {
-                        double parsedNum1 = Double.parseDouble(element);
-                        double parsedNum2 = Double.parseDouble(nextRowElement);
-                        line.add(convertFormat(Math.max(parsedNum1, parsedNum2)));
+                        line.add(convertFormat(Math.max(getParsedNum(element), getParsedNum(nextRowElement))));
                     }
 
                     if (j == minIndex) {
-                        double parsedNum1 = Double.parseDouble(element);
-                        double parsedNum2 = Double.parseDouble(nextRowElement);
-                        line.add(convertFormat(Math.min(parsedNum1, parsedNum2)));
+                        line.add(convertFormat(Math.min(getParsedNum(element), getParsedNum(nextRowElement))));
                     }
 
                     if (j == concatIndex) {
-                        double parsedNum1;
-                        double parsedNum2;
-
                         if (iSDouble(element)) {
-                            parsedNum1 = Double.parseDouble(element);
-                            parsedNum2 = Double.parseDouble(nextRowElement);
-                            line.add(convertFormat(parsedNum1) + convertFormat(parsedNum2));
+                            line.add(convertFormat(getParsedNum(element)) + convertFormat(getParsedNum(nextRowElement)));
                         } else {
                             line.add(element + nextRowElement);
                         }
@@ -155,12 +144,12 @@ public class ExcelFile {
 
                     if (criteriaIndex.contains(j) || j == concatIndex) {
                         if (iSDouble(element)) {
-                            line.add(convertFormat(Double.parseDouble(element)));
+                            line.add(convertFormat(getParsedNum(element)));
                         } else {
                             line.add(element);
                         }
                     } else {
-                        line.add(convertFormat(Double.parseDouble(element)));
+                        line.add(convertFormat(getParsedNum(element)));
                     }
                     flag = false;
                 }
@@ -168,6 +157,10 @@ public class ExcelFile {
             sortedData.add(line);
         }
         return sortedData;
+    }
+
+    public static double getParsedNum(String element) {
+        return Double.parseDouble(element);
     }
 
     public static boolean isEmptyCell(String element, String nextRowElement) {
