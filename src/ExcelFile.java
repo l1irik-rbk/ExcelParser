@@ -14,10 +14,14 @@ public class ExcelFile {
     private static Integer concatIndex = -1;
 
     public void parseExcelFile(String selectedPath, String savePath) {
+        // получаем данные из файла
         List<List<String>> data = getDataFromFile(selectedPath);
+        // получаем первую строку и находим номера индексов для критериев и параметров сортировки
         List<String> firstLine = data.remove(0);
         setFirstLineIndexes(firstLine);
+        // сортировка на основе данных, полученных из файла
         List<List<String>> newData = sortData(data);
+        // создаем новый файл по указанному пути
         createNewFile(newData, savePath);
     }
 
@@ -30,6 +34,7 @@ public class ExcelFile {
 
             for (Row row : sheet1) {
                 List<String> rowList = new ArrayList<>();
+                // проверка на пустую строку
                 boolean isEmptyRow = helper.checkEmptyRow(row);
                 if (isEmptyRow) break;
 
@@ -45,9 +50,11 @@ public class ExcelFile {
             System.out.println("Что-то пошло не так! " + e.getMessage());
         }
 
+        // проверка на пустой столбец
         Integer emptyColumnNumber = helper.findEmptyColumnNumber(data);
         if (emptyColumnNumber == null) return data;
 
+        // если есть пустой столбец, то обрезаем его и лишние столбцы
         return helper.deleteEmptyColumns(data, emptyColumnNumber);
     }
 
@@ -89,13 +96,16 @@ public class ExcelFile {
             }
 
             for (int j = 0; j < data.get(i).size(); j++) {
+                // получаем текущиий элемент и элемент по тому же индексу на следующей строке
                 element = data.get(i).get(j);
                 nextRowElement = data.size() - 1 > i ? data.get(i + 1).get(j) : element;
 
+                // проверка на то, совпадают ли критерии сортировки на первой и следующей строке
                 if (data.size() - 1 > i &&
                         lineFirstElement.equals(data.get(i + 1).get(0)) &&
                         lineSecondElement.equals(data.get(i + 1).get(1))) {
 
+                    // проверка на пустую ячейку
                     if (j != gapIndex && helper.isEmptyCell(element, nextRowElement)) {
                         String newElement = helper.getCellContent(element, nextRowElement);
                         if (newElement.equals("")) {
@@ -107,7 +117,9 @@ public class ExcelFile {
                     }
 
                     if (criteriaIndex.contains(j)) {
+                        // проверка на то, является ли элемент числом
                         if (helper.iSDouble(element)) {
+                            // преобразование строки в число с обрезанием десятичной части если число целое
                             line.add(helper.convertFormat(helper.getParsedNum(element)));
                         } else {
                             line.add(element);
@@ -134,9 +146,13 @@ public class ExcelFile {
                         }
                     }
                     flag = true;
+
+                    // обработка строк, которые не группируются
                 } else {
+                    // если колонка не используется при группировке, пропускем итерацию
                     if (j == gapIndex) continue;
 
+                    // проверка на пустую ячейку
                     if (element.equals("")) {
                         line.add(element);
                         continue;

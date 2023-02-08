@@ -48,6 +48,7 @@ public class ExcelParser extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // выбираем путь до файла
         if (e.getSource() == loadButton) {
             JFileChooser fileChooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -62,6 +63,7 @@ public class ExcelParser extends JFrame implements ActionListener {
             }
         }
 
+        // выбираем место сохранения файла и его название
         if (e.getSource() == saveButton) {
             JFileChooser fileChooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -76,6 +78,7 @@ public class ExcelParser extends JFrame implements ActionListener {
             }
         }
 
+        // создаем новый файл
         if (e.getSource() == createButton) {
             if (selectedFilePath == null || saveFilePath == null) return;
             new ExcelFile().parseExcelFile(selectedFilePath.toString(), saveFilePath.toString());
