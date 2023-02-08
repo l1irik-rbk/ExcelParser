@@ -34,12 +34,12 @@ public class Helper {
         return format.format(num);
     }
 
-    public boolean checkEmptyRow(Row row){
+    public boolean checkEmptyRow(Row row) {
         boolean isEmpty = true;
         DataFormatter dataFormatter = new DataFormatter();
 
-        for(Cell cell: row) {
-            if(dataFormatter.formatCellValue(cell).trim().length() > 0) {
+        for (Cell cell : row) {
+            if (dataFormatter.formatCellValue(cell).trim().length() > 0) {
                 isEmpty = false;
                 break;
             }
@@ -47,7 +47,7 @@ public class Helper {
         return isEmpty;
     }
 
-    public Integer findEmptyColumnNumber(List<List<String>> data){
+    public Integer findEmptyColumnNumber(List<List<String>> data) {
         Integer emptyColumnNumber = null;
 
         for (int i = 0; i < data.get(0).size(); i++) {
@@ -65,7 +65,7 @@ public class Helper {
         return emptyColumnNumber;
     }
 
-    public List<List<String>> deleteEmptyColumns(List<List<String>> data, int emptyColumnNumber){
+    public List<List<String>> deleteEmptyColumns(List<List<String>> data, int emptyColumnNumber) {
         for (List<String> row : data) {
             while (row.size() > emptyColumnNumber) {
                 row.remove(emptyColumnNumber);

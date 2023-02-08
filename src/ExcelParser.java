@@ -54,7 +54,7 @@ public class ExcelParser extends JFrame implements ActionListener {
                     "Select .xlsx or .xls file", "xlsx", "xls");
             fileChooser.setFileFilter(filter);
 
-            int response =  fileChooser.showOpenDialog(null);
+            int response = fileChooser.showOpenDialog(null);
 
             if (response == JFileChooser.APPROVE_OPTION) {
                 selectedFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());
@@ -68,7 +68,7 @@ public class ExcelParser extends JFrame implements ActionListener {
                     "Save .xlsx or .xls file", "xlsx", "xls");
             fileChooser.setFileFilter(filter);
 
-            int response =  fileChooser.showSaveDialog(null);
+            int response = fileChooser.showSaveDialog(null);
 
             if (response == JFileChooser.APPROVE_OPTION) {
                 saveFilePath = new File(fileChooser.getSelectedFile().getAbsolutePath());

@@ -13,7 +13,7 @@ public class ExcelFile {
     private static Integer minIndex = -1;
     private static Integer concatIndex = -1;
 
-    public void parseExcelFile(String selectedPath, String savePath ) {
+    public void parseExcelFile(String selectedPath, String savePath) {
         List<List<String>> data = getDataFromFile(selectedPath);
         List<String> firstLine = data.remove(0);
         setFirstLineIndexes(firstLine);
@@ -28,12 +28,12 @@ public class ExcelFile {
             Workbook workbook = new XSSFWorkbook(file);
             Sheet sheet1 = workbook.getSheetAt(0);
 
-            for (Row row: sheet1) {
+            for (Row row : sheet1) {
                 List<String> rowList = new ArrayList<>();
                 boolean isEmptyRow = helper.checkEmptyRow(row);
                 if (isEmptyRow) break;
 
-                for (Cell cell: row) {
+                for (Cell cell : row) {
                     switch (cell.getCellType()) {
                         case BLANK, STRING -> rowList.add(cell.getStringCellValue());
                         case NUMERIC -> rowList.add(String.valueOf(cell.getNumericCellValue()));
@@ -51,12 +51,12 @@ public class ExcelFile {
         return helper.deleteEmptyColumns(data, emptyColumnNumber);
     }
 
-    public static void createNewFile(List<List<String>> data, String path){
+    public static void createNewFile(List<List<String>> data, String path) {
         try {
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet();
 
-            for (int i =0; i < data.size(); i++) {
+            for (int i = 0; i < data.size(); i++) {
                 Row row = sheet.createRow(i);
                 for (int j = 0; j < data.get(i).size(); j++) {
                     Cell cell = row.createCell(j);
