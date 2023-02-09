@@ -7,11 +7,11 @@ import java.util.*;
 public class ExcelFile {
     private static final Helper helper = new Helper();
     private static final List<Integer> criteriaIndex = new ArrayList<>();
-    private static final List<Integer> gapIndex =  new ArrayList<>();
-    private static final List<Integer> sumIndex =  new ArrayList<>();
-    private static final List<Integer> maxIndex =  new ArrayList<>();
-    private static final List<Integer> minIndex =  new ArrayList<>();
-    private static final List<Integer> concatIndex =  new ArrayList<>();
+    private static final List<Integer> gapIndex = new ArrayList<>();
+    private static final List<Integer> sumIndex = new ArrayList<>();
+    private static final List<Integer> maxIndex = new ArrayList<>();
+    private static final List<Integer> minIndex = new ArrayList<>();
+    private static final List<Integer> concatIndex = new ArrayList<>();
 
     public void parseExcelFile(String selectedPath, String savePath) {
         // получаем данные из файла
@@ -23,12 +23,6 @@ public class ExcelFile {
         List<List<String>> newData = sortData(data);
         // создаем новый файл по указанному пути
         createNewFile(newData, savePath);
-        System.out.println("criteriaIndex " + criteriaIndex);
-        System.out.println("gapIndex " + gapIndex);
-        System.out.println("sumIndex " + sumIndex);
-        System.out.println("maxIndex " + maxIndex);
-        System.out.println("minIndex " + minIndex);
-        System.out.println("concatIndex " + concatIndex);
     }
 
     public static List<List<String>> getDataFromFile(String path) {
@@ -93,8 +87,10 @@ public class ExcelFile {
 
         for (int i = 0; i < data.size(); i++) {
             List<String> line = new ArrayList<>();
-            String lineFirstElement = data.get(i).get(0);
-            String lineSecondElement = data.get(i).get(1);
+            List<String> currentLine = data.get(i);
+            List<String> nextLine = data.size() - 1 > i ? data.get(i + 1) : null;
+            // проверка на не ограниченное число критериев сортировки
+            boolean hasSortCriteria = helper.checkSortCriteria(currentLine, nextLine, criteriaIndex);
 
             if (flag) {
                 flag = false;
@@ -107,10 +103,7 @@ public class ExcelFile {
                 nextRowElement = data.size() - 1 > i ? data.get(i + 1).get(j) : element;
 
                 // проверка на то, совпадают ли критерии сортировки на первой и следующей строке
-                if (data.size() - 1 > i &&
-                        lineFirstElement.equals(data.get(i + 1).get(0)) &&
-                        lineSecondElement.equals(data.get(i + 1).get(1))) {
-
+                if (data.size() - 1 > i && hasSortCriteria) {
                     // проверка на пустую ячейку
                     if (!gapIndex.contains(j) && helper.isEmptyCell(element, nextRowElement)) {
                         String newElement = helper.getCellContent(element, nextRowElement);
@@ -140,7 +133,7 @@ public class ExcelFile {
                         line.add(helper.convertFormat(Math.max(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 
-                    if ( minIndex.contains(j)) {
+                    if (minIndex.contains(j)) {
                         line.add(helper.convertFormat(Math.min(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 

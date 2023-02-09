@@ -4,6 +4,26 @@ import java.text.*;
 import java.util.*;
 
 public class Helper {
+    public boolean checkSortCriteria(List<String> currentLine, List<String> nextLine, List<Integer> criteriaIndex) {
+        boolean hasSortCriteria = false;
+
+        for (Integer index : criteriaIndex) {
+            String currentLineElement = currentLine.get(index);
+            String nextLineElement = nextLine != null ? nextLine.get(index) : null;
+
+            if (nextLine == null) break;
+
+            if (currentLineElement.equals(nextLineElement)) {
+                hasSortCriteria = true;
+            } else {
+                hasSortCriteria = false;
+                break;
+            }
+        }
+
+        return hasSortCriteria;
+    }
+
     public double getParsedNum(String element) {
         return Double.parseDouble(element);
     }
