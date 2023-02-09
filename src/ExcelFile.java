@@ -7,11 +7,11 @@ import java.util.*;
 public class ExcelFile {
     private static final Helper helper = new Helper();
     private static final List<Integer> criteriaIndex = new ArrayList<>();
-    private static Integer gapIndex = -1;
-    private static Integer sumIndex = -1;
-    private static Integer maxIndex = -1;
-    private static Integer minIndex = -1;
-    private static Integer concatIndex = -1;
+    private static final List<Integer> gapIndex =  new ArrayList<>();
+    private static final List<Integer> sumIndex =  new ArrayList<>();
+    private static final List<Integer> maxIndex =  new ArrayList<>();
+    private static final List<Integer> minIndex =  new ArrayList<>();
+    private static final List<Integer> concatIndex =  new ArrayList<>();
 
     public void parseExcelFile(String selectedPath, String savePath) {
         // получаем данные из файла
@@ -23,6 +23,12 @@ public class ExcelFile {
         List<List<String>> newData = sortData(data);
         // создаем новый файл по указанному пути
         createNewFile(newData, savePath);
+        System.out.println("criteriaIndex " + criteriaIndex);
+        System.out.println("gapIndex " + gapIndex);
+        System.out.println("sumIndex " + sumIndex);
+        System.out.println("maxIndex " + maxIndex);
+        System.out.println("minIndex " + minIndex);
+        System.out.println("concatIndex " + concatIndex);
     }
 
     public static List<List<String>> getDataFromFile(String path) {
@@ -106,7 +112,7 @@ public class ExcelFile {
                         lineSecondElement.equals(data.get(i + 1).get(1))) {
 
                     // проверка на пустую ячейку
-                    if (j != gapIndex && helper.isEmptyCell(element, nextRowElement)) {
+                    if (!gapIndex.contains(j) && helper.isEmptyCell(element, nextRowElement)) {
                         String newElement = helper.getCellContent(element, nextRowElement);
                         if (newElement.equals("")) {
                             line.add(newElement);
@@ -126,19 +132,19 @@ public class ExcelFile {
                         }
                     }
 
-                    if (j == sumIndex) {
+                    if (sumIndex.contains(j)) {
                         line.add(helper.convertFormat(helper.getParsedNum(element) + helper.getParsedNum(nextRowElement)));
                     }
 
-                    if (j == maxIndex) {
+                    if (maxIndex.contains(j)) {
                         line.add(helper.convertFormat(Math.max(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 
-                    if (j == minIndex) {
+                    if ( minIndex.contains(j)) {
                         line.add(helper.convertFormat(Math.min(helper.getParsedNum(element), helper.getParsedNum(nextRowElement))));
                     }
 
-                    if (j == concatIndex) {
+                    if (concatIndex.contains(j)) {
                         if (helper.iSDouble(element)) {
                             line.add(helper.convertFormat(helper.getParsedNum(element)) + helper.convertFormat(helper.getParsedNum(nextRowElement)));
                         } else {
@@ -150,7 +156,7 @@ public class ExcelFile {
                     // обработка строк, которые не группируются
                 } else {
                     // если колонка не используется при группировке, пропускем итерацию
-                    if (j == gapIndex) continue;
+                    if (gapIndex.contains(j)) continue;
 
                     // проверка на пустую ячейку
                     if (element.equals("")) {
@@ -158,7 +164,7 @@ public class ExcelFile {
                         continue;
                     }
 
-                    if (criteriaIndex.contains(j) || j == concatIndex) {
+                    if (criteriaIndex.contains(j) || concatIndex.contains(j)) {
                         if (helper.iSDouble(element)) {
                             line.add(helper.convertFormat(helper.getParsedNum(element)));
                         } else {
@@ -179,11 +185,11 @@ public class ExcelFile {
         for (int i = 0; i < firstLine.size(); i++) {
             String element = firstLine.get(i);
             if ("".equals(element)) criteriaIndex.add(i);
-            if ("-".equals(element)) gapIndex = i;
-            if ("SUM".equals(element)) sumIndex = i;
-            if ("MAX".equals(element)) maxIndex = i;
-            if ("MIN".equals(element)) minIndex = i;
-            if ("CONCAT".equals(element)) concatIndex = i;
+            if ("-".equals(element)) gapIndex.add(i);
+            if ("SUM".equals(element)) sumIndex.add(i);
+            if ("MAX".equals(element)) maxIndex.add(i);
+            if ("MIN".equals(element)) minIndex.add(i);
+            if ("CONCAT".equals(element)) concatIndex.add(i);
         }
     }
 }
