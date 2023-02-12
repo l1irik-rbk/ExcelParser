@@ -4,24 +4,22 @@ import java.text.*;
 import java.util.*;
 
 public class Helper {
-    public boolean checkSortCriteria(List<String> currentLine, List<String> nextLine, List<Integer> criteriaIndex) {
-        boolean hasSortCriteria = false;
-
-        for (Integer index : criteriaIndex) {
-            String currentLineElement = currentLine.get(index);
-            String nextLineElement = nextLine != null ? nextLine.get(index) : null;
-
-            if (nextLine == null) break;
-
-            if (currentLineElement.equals(nextLineElement)) {
-                hasSortCriteria = true;
-            } else {
-                hasSortCriteria = false;
-                break;
-            }
+    public boolean hasElement(List<String> currentLine, Integer index) {
+        try {
+            currentLine.get(index);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
+    }
 
-        return hasSortCriteria;
+    public List<List<String>> groupDataByLineIndexes(List<List<String>> data, List<Integer> lineIndexes) {
+        List<List<String>> groupedData = new ArrayList<>();
+
+        for (Integer index : lineIndexes) {
+            groupedData.add(data.get(index));
+        }
+        return groupedData;
     }
 
     public double getParsedNum(String element) {
@@ -49,7 +47,7 @@ public class Helper {
     }
 
     public String convertFormat(Double num) {
-        DecimalFormat format = new DecimalFormat();
+        DecimalFormat format = new DecimalFormat("#.###");
         format.setDecimalSeparatorAlwaysShown(false);
         return format.format(num);
     }
